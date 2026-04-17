@@ -1,17 +1,48 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Mock database of students
 const MOCK_USERS = [
-  { roll: "202401100200100", password: "Ganga@123", name: "Ganga Tripathi" },
-  { roll: "202401100200189", password: "Manish@123", name: "Manish Sharma" },
-  { roll: "202401100200220", password: "Om@123", name: "Om Prakash Yadav" },
-  { roll: "20240110020099", password: "Gagan@123", name: "Gagan Sharma" }
+  { 
+    roll: "202401100200100", 
+    password: "Ganga@123", 
+    name: "Ganga Tripathi",
+    email: "ganga@kiet.edu",
+    branch: "CSE",
+    year: "2"
+  },
+  { 
+    roll: "202401100200189", 
+    password: "Manish@123", 
+    name: "Manish Sharma",
+    email: "manish.2428cse246@kiet.edu",
+    branch: "CSE",
+    year: "2"
+  },
+  { 
+    roll: "202401100200220", 
+    password: "Om@123", 
+    name: "Om Prakash Yadav",
+    email: "om.2428cse1742@kiet.edu",
+    branch: "CSE",
+    year: "2"
+  },
+  { 
+    roll: "20240110020099", 
+    password: "Gagan@123", 
+    name: "Gagan Sharma",
+    email: "gagan.2428cse242@kiet.edu",
+    branch: "CSE",
+    year: "2"
+  }
 ];
 
 export default function LoginPage({ setUser }) {
+  const navigate = useNavigate();
   const [roll, setRoll] = useState("");
   const [password, setPassword] = useState("");
+  const [showAccounts, setShowAccounts] = useState(false);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -26,8 +57,9 @@ export default function LoginPage({ setUser }) {
     );
 
     if (foundUser) {
-      setUser({ name: foundUser.name, roll: foundUser.roll });
+      setUser(foundUser);
       toast.success(`Welcome back, ${foundUser.name.split(" ")[0]}!`);
+      navigate("/");
     } else {
       toast.error("Invalid Roll Number or Password!");
     }
@@ -77,12 +109,58 @@ export default function LoginPage({ setUser }) {
           </button>
         </form>
 
+        <div className="mt-6 text-center">
+          <Link
+            to="/admin"
+            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400"
+          >
+            Admin access
+          </Link>
+        </div>
+
         <div className="mt-8 p-4 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl text-xs text-slate-600 dark:text-slate-400 text-center border border-slate-200/50 dark:border-slate-700/50">
-          <p className="font-bold mb-1 text-slate-800 dark:text-slate-200">Test Accounts:</p>
-          <p>Roll: 202401100200100 | Pass: Ganga@123</p>
-          <p>Roll: 20240110020099 | Pass: Gagan@123</p>
-          <p>Roll: 202401100200189 | Pass: Manish@123</p>
-          <p>Roll: 202401100200220 | Pass: Om@123</p>
+          <p
+            onClick={() => setShowAccounts(!showAccounts)}
+            className="font-bold mb-2 text-slate-800 dark:text-slate-200 cursor-pointer hover:text-indigo-600 transition"
+          >
+            Test Accounts {showAccounts ? "▲" : "▼"}
+          </p>
+          <div
+            className={`overflow-hidden transition-all duration-500 ${showAccounts ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+              }`}
+          >
+            <div
+              className={`transition-all duration-500 ease-in-out overflow-hidden ${showAccounts
+                ? "max-h-[500px] opacity-100 scale-100"
+                : "max-h-0 opacity-0 scale-95"
+                }`}
+            >
+              <div className="flex flex-col gap-1 mt-2">
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-out ${showAccounts
+                      ? "max-h-40 opacity-100 translate-y-0"
+                      : "max-h-0 opacity-0 -translate-y-2"
+                    }`}
+                >
+                  <div className="flex flex-col gap-1 mt-2">
+                    {MOCK_USERS.map((user, index) => (
+                      <div
+                        key={index}
+                        onClick={() => {
+                          setRoll(user.roll);
+                          setPassword(user.password);
+                          toast.success("Credentials filled!");
+                        }}
+                        className="cursor-pointer text-center py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-slate-700 hover:text-indigo-600 transition-all duration-200"
+                      >
+                        Roll: {user.roll} | Pass: {user.password}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
